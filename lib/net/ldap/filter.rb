@@ -225,7 +225,7 @@ class Net::LDAP::Filter
 
     # http://tools.ietf.org/html/rfc4515 lists these exceptions from UTF1
     # charset for filters. All of the following must be escaped in any normal
-    # string using a single backslash ('\') as escape. 
+    # string using a single backslash ('\') as escape.
     #
     ESCAPES = {
       "\0" => '00', # NUL            = %x00 ; null character
@@ -234,10 +234,10 @@ class Net::LDAP::Filter
       ')'  => '29', # RPARENS        = %x29 ; right parenthesis (")")
       '\\' => '5C', # ESC            = %x5C ; esc (or backslash) ("\")
     }
-    # Compiled character class regexp using the keys from the above hash. 
+    # Compiled character class regexp using the keys from the above hash.
     ESCAPE_RE = Regexp.new(
-      "[" + 
-      ESCAPES.keys.map { |e| Regexp.escape(e) }.join + 
+      "[" +
+      ESCAPES.keys.map { |e| Regexp.escape(e) }.join +
       "]")
 
     ##
@@ -293,8 +293,8 @@ class Net::LDAP::Filter
         present?(ber.to_s)
       when 0xa9 # context-specific constructed 9, "extensible comparison"
         raise Net::LDAP::LdapError, "Invalid extensible search filter, should be at least two elements" if ber.size<2
-        
-        # Reassembles the extensible filter parts 
+
+        # Reassembles the extensible filter parts
         # (["sn", "2.4.6.8.10", "Barbara Jones", '1'])
         type = value = dn = rule = nil
         ber.each do |element|
@@ -310,7 +310,7 @@ class Net::LDAP::Filter
         attribute << type if type
         attribute << ":#{dn}" if dn
         attribute << ":#{rule}" if rule
-        
+
         ex(attribute, value)
       else
         raise Net::LDAP::LdapError, "Invalid BER tag-value (#{ber.ber_identifier}) in search filter."
@@ -733,7 +733,7 @@ class Net::LDAP::Filter
         scanner.scan(/\s*/)
         if op = scanner.scan(/<=|>=|!=|:=|=/)
           scanner.scan(/\s*/)
-          if value = scanner.scan(/(?:[-\w*.+@=,#\$%&!'\s]|\\[a-fA-F\d]{2})+/)
+          if value = scanner.scan(/(?:[-\w*.+@=,#\$%&!'\s^[[:alnum:]]]|\\[a-fA-F\d]{2})+/)
             # 20100313 AZ: Assumes that "(uid=george*)" is the same as
             # "(uid=george* )". The standard doesn't specify, but I can find
             # no examples that suggest otherwise.
